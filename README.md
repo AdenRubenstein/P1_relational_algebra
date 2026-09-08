@@ -1,21 +1,6 @@
 Group 1
 
-TODO:
-    RAImpl.java:
-        Implement all methods from the RA interface:
-        select
-        project
-        union
-        intersect
-        diff
-        rename
-        cartesianProduct
-        natural join
-        theta join
-        Use Relation and Predicate as types.
-        Create new relations for results; never modify input relations.
-        Use only Java built-in collections.
-        
+TODO:   
     Driver.java:
         Create an RAImpl object.
         Print five English descriptions.
@@ -28,10 +13,10 @@ TODO:
 
 Aden Rubenstein:
 
-Aris Manglogiannis:
+Aris Manglogiannis: Created diff and rename funtions
 
 Liam Keenan:
 
-Lior Akselrad:
+Lior Akselrad: Created join functions
 
-Poojitha Kommineni:
+Poojitha Kommineni: Created union and intersect functions
