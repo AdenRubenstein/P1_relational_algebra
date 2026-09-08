@@ -14,8 +14,23 @@ public class RAImpl implements RA {
 
     @Override
     public Relation select(Relation rel, Predicate p) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'select'");
+	
+        // Output Prpearation 
+        List<String> outAttrs = new ArrayList<>(rel .getAttrs());
+        List<Type> outTypes = new ArrayList<>(rel .getTypes());
+        Relation result = new RelationBuilder()
+                .attributeNames(outAttrs)
+                .attributeTypes(outTypes)
+                .build();
+
+	for (int i=0; i < rel.getSize(); i++) {
+	    List<Cell> insertion = rel.getRow(i);
+	    if (p.check(insertion)) {
+		result.insert(insertion);
+	    }
+	}
+	return result;
+	
     }
 
     @Override
