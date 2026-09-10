@@ -36,8 +36,33 @@ public class RAImpl implements RA {
     
     @Override
     public Relation cartesianProduct(Relation rel1, Relation rel2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'cartesianProduct'");
+        // Copy of predicate-join, but with tautlogy.
+        for (String attr : rel2.getAttrs()) {
+            if (rel1.hasAttr(attr)) {
+                throw new IllegalArgumentException("Relations share attribute: " + attr);
+            }
+        }
+
+        List<String> outAttrs = new ArrayList<>(rel1.getAttrs());
+        outAttrs.addAll(rel2.getAttrs());
+        List<Type> outTypes = new ArrayList<>(rel1.getTypes());
+        outTypes.addAll(rel2.getTypes());
+
+        Relation result = new RelationBuilder()
+                .attributeNames(outAttrs)
+                .attributeTypes(outTypes)
+                .build();
+
+        for (int i = 0; i < rel1.getSize(); i++) {
+            List<Cell> left = rel1.getRow(i);
+            for (int j = 0; j < rel2.getSize(); j++) {
+                List<Cell> joined = new ArrayList<>(left);
+                joined.addAll(rel2.getRow(j));
+                result.insert(joined);
+     
+            }
+        }
+        return result;
     }
     
     @Override
