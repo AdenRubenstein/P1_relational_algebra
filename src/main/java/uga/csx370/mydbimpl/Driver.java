@@ -24,12 +24,24 @@ public class Driver {
         // CSV file.
 	RAImpl RelationAlg = new RAImpl();
 	
-        Relation instructor = new RelationBuilder()
+	Relation teaches = new RelationBuilder()
+		.attributeNames(List.of("t_id", "t_course_id", "t_sec_id", "t_semester", "t_year"))
+		.attributeTypes(List.of(Type.INTEGER, Type.INTEGER, Type.STRING, Type.STRING, Type.INTEGER))
+				.build();
+	teaches.loadData(DIR + "teaches_export.csv");
+
+	Relation course = new RelationBuilder()
+		.attributeNames(List.of("c_course_id", "c_title", "c_dept_name", "c_credits"))
+		.attributeTypes(List.of(Type.INTEGER, Type.STRING, Type.STRING, Type.INTEGER))
+				.build();
+	course.loadData(DIR + "course_export.csv");
+
+	Relation instructor = new RelationBuilder()
 	    .attributeNames(List.of("i_id", "i_name", "i_dept_name", "i_salary"))
 	    .attributeTypes(List.of(Type.INTEGER, Type.STRING, Type.STRING, Type.DOUBLE))
                 .build();
 	instructor.loadData("/home/adenr290/mysql-files/P1_relational_algebra/tables/instructor_export.csv");
-	 Relation advisor = new RelationBuilder()
+	Relation advisor = new RelationBuilder()
 	    .attributeNames(List.of("s_id", "inst_id"))
 	    .attributeTypes(List.of(Type.STRING, Type.STRING))
                 .build();
@@ -56,6 +68,19 @@ public class Driver {
 	    (row.get(10).getAsString().equals("English") || row.get(10).getAsString().equals("Languages"));
 	Relation join2 = RelationAlg.join(select1, instructor, p_join2);
 	join2.print();
+
+	//Lior's
+	System.out.print("\nLior Akselrad - la87760\n");
+	System.out.println("Query: Instructors who taught a course outside of their own department");
+	Relation one = RelationAlg.join(teaches, instructor,
+    	row -> row.get(0).getAsInt() == row.get(5).getAsInt());
+
+	Relation two = RelationAlg.join(one, course,
+    	row -> row.get(1).getAsInt() == row.get(9).getAsInt()
+        	&& !row.get(7).getAsString().equals(row.get(11).getAsString()));
+	
+	Relation three = RelationAlg.select(two, row -> row.get(4).getAsInt() >= 2005);
+	RelationAlg.project(three, List.of("i_name", "i_dept_name", "c_title", "c_dept_name")).print();
 
     }
 
