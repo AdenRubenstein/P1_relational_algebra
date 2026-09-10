@@ -24,15 +24,64 @@ public class RAImpl implements RA {
 
     @Override
     public Relation union(Relation rel1, Relation rel2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'union'");
-    }
+		//union needs matching schemas
+        if (!rel1.getAttrs().equals(rel2.getAttrs()) || !rel1.getTypes().equals(rel2.getTypes())) {
+			throw new IllegalArgumentException("Relations are not compatible.");
+   		}
+
+    	Relation result = new RelationBuilder()
+            	.attributeNames(rel1.getAttrs())
+            	.attributeTypes(rel1.getTypes())
+            	.build();
+
+    	Set<List<Cell>> seen = new HashSet<>();
+
+    	// add all unique rows from rel1.
+    	for (int i = 0; i < rel1.getSize(); ++i) {
+        	List<Cell> row = rel1.getRow(i);
+        	if (seen.add(row)) {
+            	result.insert(row);
+        	}
+    	}
+
+		//add all unique row from rel2 if it's not already here
+		for (int i = 0; i < rel2.getSize(); ++i) {
+        	List<Cell> row = rel2.getRow(i);
+        	if (seen.add(row)) {
+            	result.insert(row);
+        	}
+    	}
+    	return result;
+	}
 
     @Override
     public Relation intersect(Relation rel1, Relation rel2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'intersect'");
-    }
+        //intersection needs matching schemas too
+		if (!rel1.getAttrs().equals(rel2.getAttrs()) || !rel1.getTypes().equals(rel2.getTypes())) {
+        	throw new IllegalArgumentException("Relations are not compatible.");
+   		}
+
+		Relation result = new RelationBuilder()
+           	 	.attributeNames(rel1.getAttrs())
+            	.attributeTypes(rel1.getTypes())
+            	.build();
+
+    	Set<List<Cell>> rightRows = new HashSet<>();
+    	for (int i = 0; i < rel2.getSize(); ++i) {
+        	rightRows.add(rel2.getRow(i));
+    	}
+
+    	Set<List<Cell>> seen = new HashSet<>();
+
+		//making sure there's no duplication
+		for (int i = 0; i < rel1.getSize(); ++i) {
+        	List<Cell> row = rel1.getRow(i);
+        	if (rightRows.contains(row) && seen.add(row)) {
+            	result.insert(row);
+        	}
+    	}
+    	return result;
+	}
     
     @Override
     public Relation cartesianProduct(Relation rel1, Relation rel2) {
