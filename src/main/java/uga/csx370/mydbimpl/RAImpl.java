@@ -9,6 +9,8 @@ import uga.csx370.mydb.RA;
 import uga.csx370.mydb.Relation;
 import uga.csx370.mydb.RelationBuilder;
 import uga.csx370.mydb.Type;
+import java.util.HashSet;
+import java.util.Set;
 
 public class RAImpl implements RA {
 
@@ -38,14 +40,62 @@ public class RAImpl implements RA {
 
     @Override
     public Relation diff(Relation rel1, Relation rel2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'diff'");
+        // Difference requires matching schemas.
+        if (!rel1.getAttrs().equals(rel2.getAttrs()) || !rel1.getTypes().equals(rel2.getTypes())) {
+            throw new IllegalArgumentException("Relations are not compatible.");
+        }
+
+        Relation result = new RelationBuilder()
+                .attributeNames(rel1.getAttrs())
+                .attributeTypes(rel1.getTypes())
+                .build();
+        Set<List<Cell>> rightRows = new HashSet<>();
+
+        // Store rows from rel2 for quick membership checks.
+        for (int i = 0; i < rel2.getSize(); ++i) {
+            rightRows.add(rel2.getRow(i));
+        }
+
+        Set<List<Cell>> seen = new HashSet<>();
+
+        // Add unique rows from rel1 that do not appear in rel2.
+        for (int i = 0; i < rel1.getSize(); ++i) {
+            List<Cell> row = rel1.getRow(i);
+
+            if (!rightRows.contains(row) && seen.add(row)) {
+                result.insert(row);
+            }
+        }
+        return result;
     }
 
     @Override
     public Relation rename(Relation rel, List<String> origAttr, List<String> renamedAttr) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'rename'");
+        // Each original attribute must have one corresponding replacement name.
+        if (origAttr.size() != renamedAttr.size()) {
+            throw new IllegalArgumentException("Attribute lists must have equal lengths.");
+        }
+
+        List<String> attrs = rel.getAttrs();
+
+        // Replace the requested names while preserving column order and types.
+        for (int i = 0; i < origAttr.size(); ++i) {
+            if (!rel.hasAttr(origAttr.get(i))) {
+                throw new IllegalArgumentException("Attribute does not exist: " + origAttr.get(i));
+            }
+            attrs.set(rel.getAttrIndex(origAttr.get(i)), renamedAttr.get(i));
+        }
+
+        Relation result = new RelationBuilder()
+                .attributeNames(attrs)
+                .attributeTypes(rel.getTypes())
+                .build();
+
+        // Copy the original rows into the relation with the renamed schema.
+        for (int i = 0; i < rel.getSize(); ++i) {
+            result.insert(rel.getRow(i));
+        }
+        return result;
     }
 
     @Override
