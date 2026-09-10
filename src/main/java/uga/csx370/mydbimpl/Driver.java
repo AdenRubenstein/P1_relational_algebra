@@ -14,7 +14,7 @@ import uga.csx370.mydb.Type;
 import uga.csx370.mydb.Predicate;
 
 public class Driver {
-    
+    public static String DIR = System.getProperty("user.dir") + "/tables/";
     public static void main(String[] args) {
         // Following is an example of how to use the relation class.
         // This creates a table with three columns with below mentioned
@@ -40,18 +40,20 @@ public class Driver {
 	    .attributeNames(List.of("i_id", "i_name", "i_dept_name", "i_salary"))
 	    .attributeTypes(List.of(Type.INTEGER, Type.STRING, Type.STRING, Type.DOUBLE))
                 .build();
-	instructor.loadData("/home/adenr290/mysql-files/P1_relational_algebra/tables/instructor_export.csv");
+	instructor.loadData(DIR + "instructor_export.csv");
 	Relation advisor = new RelationBuilder()
 	    .attributeNames(List.of("s_id", "inst_id"))
 	    .attributeTypes(List.of(Type.STRING, Type.STRING))
                 .build();
-	advisor.loadData("/home/adenr290/mysql-files/P1_relational_algebra/tables/advisor_export.csv");
+	advisor.loadData(DIR + "advisor_export.csv");
 	Relation takes = new RelationBuilder()
 	    .attributeNames(List.of("t_s_id", "course_id", "sec_id", "semester", "year", "grade"))
 	    .attributeTypes(List.of(Type.STRING, Type.STRING, Type.STRING, Type.STRING, Type.INTEGER, Type.STRING))
                 .build();
-	takes.loadData("/home/adenr290/mysql-files/P1_relational_algebra/tables/takes_export.csv");
+	takes.loadData(DIR + "takes_export.csv");
 
+
+	/*
 	// Aden's 
 	System.out.printf("\n\nAden Rubenstein - amr00658 \n \n");
 	Predicate p_join1 = row ->
@@ -67,7 +69,8 @@ public class Driver {
 	    row.get(7).getAsString().equals(String.valueOf(row.get(8).getAsInt())) &&
 	    (row.get(10).getAsString().equals("English") || row.get(10).getAsString().equals("Languages"));
 	Relation join2 = RelationAlg.join(select1, instructor, p_join2);
-	join2.print();
+	Relation output_aden = RelationAlg.project(join2, List.of("t_s_id", "course_id,", "sec_id", "i_id", "i_name"));
+	output_aden.print();
 
 	//Lior's
 	System.out.print("\nLior Akselrad - la87760\n");
@@ -81,7 +84,24 @@ public class Driver {
 	
 	Relation three = RelationAlg.select(two, row -> row.get(4).getAsInt() >= 2005);
 	RelationAlg.project(three, List.of("i_name", "i_dept_name", "c_title", "c_dept_name")).print();
+	*/
 
-    }
+	// Poojitha
+	System.out.print("\n Poojitha Kommineni - pk37813 \n");
+	System.out.println("Query: Instructors who taught in fall, and taught a course worth 3+ credits.");
+
+	Relation ti = RelationAlg.join(teaches, instructor, row ->
+				       row.get(0).getAsInt() == row.get(5).getAsInt());
+	Relation tic = RelationAlg.join(ti, course, row ->
+					row.get(1).getAsInt() == row.get(9).getAsInt());
+	Relation fall = RelationAlg.select(tic, row ->
+					   row.get(3).getAsString().equals("Fall"));
+	Relation bigCredit = RelationAlg.select(tic, row ->
+						row.get(12).getAsInt() >= 3);
+	Relation result = RelationAlg.intersect(fall, bigCredit);
+	result.print();
+
+        
+	} 
 
 }
