@@ -14,6 +14,32 @@ import java.util.Set;
 
 public class RAImpl implements RA {
 
+
+
+    @Override
+    public Relation project(Relation rel, List<String> attrs) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'project'");
+    }
+
+    @Override
+    public Relation union(Relation rel1, Relation rel2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'union'");
+    }
+
+    @Override
+    public Relation intersect(Relation rel1, Relation rel2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'intersect'");
+    }
+    
+    @Override
+    public Relation cartesianProduct(Relation rel1, Relation rel2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'cartesianProduct'");
+    }
+    
     @Override
     public Relation select(Relation rel, Predicate p) {
 	
@@ -33,25 +59,7 @@ public class RAImpl implements RA {
 	}
 	return result;
 	
-    }
-
-    @Override
-    public Relation project(Relation rel, List<String> attrs) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'project'");
-    }
-
-    @Override
-    public Relation union(Relation rel1, Relation rel2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'union'");
-    }
-
-    @Override
-    public Relation intersect(Relation rel1, Relation rel2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'intersect'");
-    }
+    }   
 
     @Override
     public Relation diff(Relation rel1, Relation rel2) {
@@ -113,11 +121,6 @@ public class RAImpl implements RA {
         return result;
     }
 
-    @Override
-    public Relation cartesianProduct(Relation rel1, Relation rel2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'cartesianProduct'");
-    }
 
     @Override
     public Relation join(Relation rel1, Relation rel2) {
