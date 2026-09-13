@@ -15,7 +15,7 @@ Aden Rubenstein:
 
 Aris Manglogiannis: Created diff and rename funtions
 
-Liam Keenan:
+Liam Keenan: Created project function
 
 Lior Akselrad: Created join functions
 

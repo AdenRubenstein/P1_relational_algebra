@@ -8,6 +8,7 @@ package uga.csx370.mydbimpl;
 
 import java.util.List;
 
+import uga.csx370.mydb.RA;
 import uga.csx370.mydb.Relation;
 import uga.csx370.mydb.RelationBuilder;
 import uga.csx370.mydb.Type;
@@ -22,7 +23,7 @@ public class Driver {
         // After creating the table, data is loaded from a CSV file.
         // Path should be replaced with a correct file path for a compatible
         // CSV file.
-	RAImpl RelationAlg = new RAImpl();
+	RA RelationAlg = new RAImpl();
 	
 	Relation teaches = new RelationBuilder()
 		.attributeNames(List.of("t_id", "t_course_id", "t_sec_id", "t_semester", "t_year"))
@@ -63,6 +64,12 @@ public class Driver {
 	    .attributeTypes(List.of(Type.STRING, Type.STRING, Type.DOUBLE))
                 .build();
 	department.loadData(DIR + "department_export.csv");
+
+	Relation student = new RelationBuilder()
+	    .attributeNames(List.of("st_id", "st_name", "st_dept_name", "st_tot_cred"))
+	    .attributeTypes(List.of(Type.STRING, Type.STRING, Type.STRING, Type.INTEGER))
+                .build();
+	student.loadData(DIR + "student_export.csv");
 
 
 	/*
@@ -117,7 +124,39 @@ public class Driver {
 	Relation result = RelationAlg.intersect(fall, bigCredit);
 	result.print();
 
-        
-	} 
+	// Liam
+	System.out.print("\n Liam Keenan - lkeen \n");
+	System.out.println("Query: Seniors (75+ credits) who earned an A in Spring 2007 in a course run "
+			   + "by a department housed in Saucon, with the course title and department budget.\n");
+
+	// Narrow takes down first so the joins below stay small.
+	Relation topGrade = RelationAlg.select(takes, row ->
+					    row.get(5).getAsString().trim().equals("A")
+					    && row.get(4).getAsInt() == 2007
+					    && row.get(3).getAsString().equals("Spring"));
+
+	// takes(0-5) + course(6-9): takes stores the course id as text, course as a number.
+	Relation withCourse = RelationAlg.join(topGrade, course, row ->
+					       row.get(1).getAsString().equals(String.valueOf(row.get(6).getAsInt())));
+
+	// + department(10-12): the department that owns the course.
+	Relation withDept = RelationAlg.join(withCourse, department, row ->
+					     row.get(8).getAsString().equals(row.get(10).getAsString()));
+
+	Relation inSaucon = RelationAlg.select(withDept, row ->
+					       row.get(11).getAsString().equals("Saucon"));
+
+	// + student(13-16): the student who took the course.
+	Relation withStudent = RelationAlg.join(inSaucon, student, row ->
+						row.get(0).getAsString().equals(row.get(13).getAsString()));
+
+	// Restrict to seniors.
+	Relation seniors = RelationAlg.select(withStudent, row -> row.get(16).getAsInt() >= 75);
+
+	Relation output_liam = RelationAlg.project(seniors,
+						   List.of("st_name", "st_dept_name", "st_tot_cred", "c_title", "d_dept_name", "d_budget"));
+	output_liam.print();
+
+	}
 
 }
