@@ -198,7 +198,7 @@ public class RAImpl implements RA {
 
     @Override
     public Relation join(Relation rel1, Relation rel2) {
-        // Attributes that appear in both relations, in rel1's order.
+        //Attributes that appear in both relations, in rel1's order.
         List<String> common = new ArrayList<>();
         for (String attr : rel1.getAttrs()) {
             if (rel2.hasAttr(attr)) {
@@ -206,7 +206,7 @@ public class RAImpl implements RA {
             }
         }
 
-        // Output schema: all of rel1, then rel2's columns except the common ones.
+        //Output schema is all of rel1, then rel2's columns except the common ones.
         List<String> outAttrs = new ArrayList<>(rel1.getAttrs());
         List<Type> outTypes = new ArrayList<>(rel1.getTypes());
         List<Integer> keep = new ArrayList<>();
@@ -224,7 +224,7 @@ public class RAImpl implements RA {
                 .attributeTypes(outTypes)
                 .build();
 
-        // Keep every pair of rows that agrees on all the common attributes.
+        //Keep every pair of rows that agrees on all the common attributes.
         for (int i = 0; i < rel1.getSize(); i++) {
             List<Cell> left = rel1.getRow(i);
             for (int j = 0; j < rel2.getSize(); j++) {
@@ -251,12 +251,14 @@ public class RAImpl implements RA {
 
     @Override
     public Relation join(Relation rel1, Relation rel2, Predicate p) {
+        //Ensures we dont have the same attribute names
         for (String attr : rel2.getAttrs()) {
             if (rel1.hasAttr(attr)) {
                 throw new IllegalArgumentException("Relations share attribute: " + attr);
             }
         }
 
+        //output schema is rel1 columns and then rel2 columns but in order
         List<String> outAttrs = new ArrayList<>(rel1.getAttrs());
         outAttrs.addAll(rel2.getAttrs());
         List<Type> outTypes = new ArrayList<>(rel1.getTypes());
@@ -267,6 +269,7 @@ public class RAImpl implements RA {
                 .attributeTypes(outTypes)
                 .build();
 
+        //Check every row from rel 1 and 2 row-by-row. Joins left and right rows if they comply with predicate
         for (int i = 0; i < rel1.getSize(); i++) {
             List<Cell> left = rel1.getRow(i);
             for (int j = 0; j < rel2.getSize(); j++) {

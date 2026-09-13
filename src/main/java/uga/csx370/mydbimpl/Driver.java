@@ -52,6 +52,18 @@ public class Driver {
                 .build();
 	takes.loadData(DIR + "takes_export.csv");
 
+	Relation prereq = new RelationBuilder()
+	    .attributeNames(List.of("p_course_id", "p_prereq_id"))
+	    .attributeTypes(List.of(Type.INTEGER, Type.INTEGER))
+                .build();
+	prereq.loadData(DIR + "prereq_export.csv");
+
+	Relation department = new RelationBuilder()
+	    .attributeNames(List.of("d_dept_name", "d_building", "d_budget"))
+	    .attributeTypes(List.of(Type.STRING, Type.STRING, Type.DOUBLE))
+                .build();
+	department.loadData(DIR + "department_export.csv");
+
 
 	/*
 	// Aden's 
@@ -74,16 +86,20 @@ public class Driver {
 
 	//Lior's
 	System.out.print("\nLior Akselrad - la87760\n");
-	System.out.println("Query: Instructors who taught a course outside of their own department");
-	Relation one = RelationAlg.join(teaches, instructor,
-    	row -> row.get(0).getAsInt() == row.get(5).getAsInt());
+	System.out.println("Query: 4-credit courses that has a prereq, owned by department with a budget over $700k, and building of course.\n");
 
-	Relation two = RelationAlg.join(one, course,
-    	row -> row.get(1).getAsInt() == row.get(9).getAsInt()
-        	&& !row.get(7).getAsString().equals(row.get(11).getAsString()));
-	
-	Relation three = RelationAlg.select(two, row -> row.get(4).getAsInt() >= 2005);
-	RelationAlg.project(three, List.of("i_name", "i_dept_name", "c_title", "c_dept_name")).print();
+	// prereq(0-1) + course(2-5): same course id
+	Relation one = RelationAlg.join(prereq, course,
+	    row -> row.get(0).getAsInt() == row.get(2).getAsInt());
+
+	// + department(6-8): the course's department
+	Relation two = RelationAlg.join(one, department,
+	    row -> row.get(4).getAsString().equals(row.get(6).getAsString()));
+
+	Relation three = RelationAlg.select(two,
+	    row -> row.get(5).getAsInt() == 4 && row.get(8).getAsDouble() > 700000.0);
+
+	three.print();
 	*/
 
 	// Poojitha
