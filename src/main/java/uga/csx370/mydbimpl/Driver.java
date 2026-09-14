@@ -93,6 +93,24 @@ public class Driver {
 	Relation output_aden = RelationAlg.project(join2, List.of("t_s_id", "course_id", "sec_id", "i_id", "i_name"));
 	output_aden.print();
 
+	// Aris
+	System.out.print("\nAris Manglogiannis - asm07519\n");
+	System.out.println("Query: Students with IDs below 50,000 who earned an A or A+ in 2010 and are advised by an English instructor.\n");
+	
+	Relation filtered2010 = RelationAlg.select(takes, row ->
+	    row.get(4).getAsInt() == 2010
+	    && (row.get(5).getAsString().equals("A") || row.get(5).getAsString().equals("A+")));
+	Relation advisedStudents = RelationAlg.join(filtered2010, advisor, row ->
+	    row.get(0).getAsString().equals(row.get(6).getAsString()));
+	Relation renamedInstructorForEnglish = RelationAlg.rename(instructor, List.of("i_id"), List.of("inst_id"));
+	Relation englishAdvisors = RelationAlg.join(advisedStudents, renamedInstructorForEnglish);
+	Relation englishTopStudents = RelationAlg.select(englishAdvisors, row ->
+	    row.get(9).getAsString().equals("English")
+	    && Integer.parseInt(row.get(0).getAsString()) < 50000);
+	Relation output_alex = RelationAlg.project(englishTopStudents,
+	    List.of("t_s_id", "course_id", "i_name", "i_dept_name", "i_salary"));
+	output_alex.print();
+
 	//Lior's
 	System.out.print("\nLior Akselrad - la87760\n");
 	System.out.println("Query: 4-credit courses that has a prereq, owned by department with a budget over $700k, and building of course.\n");
