@@ -18,8 +18,40 @@ public class RAImpl implements RA {
 
     @Override
     public Relation project(Relation rel, List<String> attrs) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'project'");
+        List<Type> relTypes = rel.getTypes();
+        List<Integer> keep = new ArrayList<>();
+        List<Type> outTypes = new ArrayList<>();
+
+        // Record where each requested attribute lives in the original row.
+        for (String attr : attrs) {
+            if (!rel.hasAttr(attr)) {
+                throw new IllegalArgumentException("Attribute does not exist: " + attr);
+            }
+            int idx = rel.getAttrIndex(attr);
+            keep.add(idx);
+            outTypes.add(relTypes.get(idx));
+        }
+
+        Relation result = new RelationBuilder()
+                .attributeNames(new ArrayList<>(attrs))
+                .attributeTypes(outTypes)
+                .build();
+
+        Set<List<Cell>> seen = new HashSet<>();
+
+        // Copy only the kept columns; projection is a set operation, so drop duplicates.
+        for (int i = 0; i < rel.getSize(); ++i) {
+            List<Cell> row = rel.getRow(i);
+            List<Cell> projected = new ArrayList<>();
+
+            for (int idx : keep) {
+                projected.add(row.get(idx));
+            }
+            if (seen.add(projected)) {
+                result.insert(projected);
+            }
+        }
+        return result;
     }
 
     @Override
