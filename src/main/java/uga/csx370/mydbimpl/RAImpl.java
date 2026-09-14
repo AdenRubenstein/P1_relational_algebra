@@ -198,41 +198,41 @@ public class RAImpl implements RA {
 
     @Override
     public Relation join(Relation rel1, Relation rel2) {
-        //Attributes that appear in both relations, in rel1's order.
-        List<String> common = new ArrayList<>();
+        //Attributes that appear in both relations
+        List<String> attributeboth = new ArrayList<>();
         for (String attr : rel1.getAttrs()) {
             if (rel2.hasAttr(attr)) {
-                common.add(attr);
+                attributeboth.add(attr);
             }
         }
 
-        //Output schema is all of rel1, then rel2's columns except the common ones.
-        List<String> outAttrs = new ArrayList<>(rel1.getAttrs());
-        List<Type> outTypes = new ArrayList<>(rel1.getTypes());
+        //Output schema is all of rel1, then rel2's columns except the ones with matching values
+        List<String> outputAttribute = new ArrayList<>(rel1.getAttrs());
+        List<Type> outputTypes = new ArrayList<>(rel1.getTypes());
         List<Integer> keep = new ArrayList<>();
         for (int i = 0; i < rel2.getAttrs().size(); i++) {
             String attr = rel2.getAttrs().get(i);
-            if (!common.contains(attr)) {
-                outAttrs.add(attr);
-                outTypes.add(rel2.getTypes().get(i));
+            if (!attributeboth.contains(attr)) {
+                outputAttribute.add(attr);
+                outputTypes.add(rel2.getTypes().get(i));
                 keep.add(i);
             }
         }
 
         Relation result = new RelationBuilder()
-                .attributeNames(outAttrs)
-                .attributeTypes(outTypes)
+                .attributeNames(outputAttribute)
+                .attributeTypes(outputTypes)
                 .build();
 
-        //Keep every pair of rows that agrees on all the common attributes.
+        //Keep every pair of rows that has the same values.
         for (int i = 0; i < rel1.getSize(); i++) {
             List<Cell> left = rel1.getRow(i);
             for (int j = 0; j < rel2.getSize(); j++) {
                 List<Cell> right = rel2.getRow(j);
                 boolean match = true;
-                for (String attr : common) {
-                    if (!left.get(rel1.getAttrIndex(attr))
-                            .equals(right.get(rel2.getAttrIndex(attr)))) {
+                for (String attribute : attributeboth) {
+                    if (!left.get(rel1.getAttrIndex(attribute))
+                            .equals(right.get(rel2.getAttrIndex(attribute)))) {
                         match = false;
                         break;
                     }
@@ -252,21 +252,21 @@ public class RAImpl implements RA {
     @Override
     public Relation join(Relation rel1, Relation rel2, Predicate p) {
         //Ensures we dont have the same attribute names
-        for (String attr : rel2.getAttrs()) {
-            if (rel1.hasAttr(attr)) {
-                throw new IllegalArgumentException("Relations share attribute: " + attr);
+        for (String attribute : rel2.getAttrs()) {
+            if (rel1.hasAttr(attribute)) {
+                throw new IllegalArgumentException("Relations share attribute: " + attribute);
             }
         }
 
-        //output schema is rel1 columns and then rel2 columns but in order
-        List<String> outAttrs = new ArrayList<>(rel1.getAttrs());
-        outAttrs.addAll(rel2.getAttrs());
-        List<Type> outTypes = new ArrayList<>(rel1.getTypes());
-        outTypes.addAll(rel2.getTypes());
+        //output is rel1 columns and then rel2 columns but in order
+        List<String> outputAttributes = new ArrayList<>(rel1.getAttrs());
+        outputAttributes.addAll(rel2.getAttrs());
+        List<Type> outputTypes = new ArrayList<>(rel1.getTypes());
+        outputTypes.addAll(rel2.getTypes());
 
         Relation result = new RelationBuilder()
-                .attributeNames(outAttrs)
-                .attributeTypes(outTypes)
+                .attributeNames(outputAttributes)
+                .attributeTypes(outputTypes)
                 .build();
 
         //Check every row from rel 1 and 2 row-by-row. Joins left and right rows if they comply with predicate
