@@ -97,11 +97,9 @@ public class Driver {
 	System.out.print("\nLior Akselrad - la87760\n");
 	System.out.println("Query: 4-credit courses that has a prereq, owned by department with a budget over $700k, and building of course.\n");
 
-	// prereq(0-1) + course(2-5): same course id
 	Relation one = RelationAlg.join(prereq, course,
 	    row -> row.get(0).getAsInt() == row.get(2).getAsInt());
 
-	// + department(6-8): the course's department
 	Relation two = RelationAlg.join(one, department,
 	    row -> row.get(4).getAsString().equals(row.get(6).getAsString()));
 
