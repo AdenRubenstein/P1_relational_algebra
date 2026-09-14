@@ -72,9 +72,11 @@ public class Driver {
 	student.loadData(DIR + "student_export.csv");
 
 
-	/*
+	
 	// Aden's 
 	System.out.printf("\n\nAden Rubenstein - amr00658 \n \n");
+	System.out.println("Output: \n Select advisors with a student who has received \n an A+ on an English or Languages course in Fall 2010.");
+	System.out.println(" Show the student ID, course & section ID, instructor ID, and instructor name.");
 	Predicate p_join1 = row ->
 	    row.get(0).getAsString().equals(row.get(6).getAsString())
 	    && row.get(4).getAsInt() == 2010;
@@ -88,7 +90,7 @@ public class Driver {
 	    row.get(7).getAsString().equals(String.valueOf(row.get(8).getAsInt())) &&
 	    (row.get(10).getAsString().equals("English") || row.get(10).getAsString().equals("Languages"));
 	Relation join2 = RelationAlg.join(select1, instructor, p_join2);
-	Relation output_aden = RelationAlg.project(join2, List.of("t_s_id", "course_id,", "sec_id", "i_id", "i_name"));
+	Relation output_aden = RelationAlg.project(join2, List.of("t_s_id", "course_id", "sec_id", "i_id", "i_name"));
 	output_aden.print();
 
 	//Lior's
@@ -107,7 +109,7 @@ public class Driver {
 	    row -> row.get(5).getAsInt() == 4 && row.get(8).getAsDouble() > 700000.0);
 
 	three.print();
-	*/
+	
 
 	// Poojitha
 	System.out.print("\n Poojitha Kommineni - pk37813 \n");

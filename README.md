@@ -11,7 +11,7 @@ TODO:
         Produce a non-empty result of roughly 50 rows or fewer.
         Be credited to a team member.
 
-Aden Rubenstein:
+Aden Rubenstein: Created select and cartesian product functions.
 
 Aris Manglogiannis: Created diff and rename funtions
 
