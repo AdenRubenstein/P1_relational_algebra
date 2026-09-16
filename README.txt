@@ -6,6 +6,6 @@ Aris Manglogiannis: Created diff and rename funtions
 
 Liam Keenan: Created project function
 
-Lior Akselrad: Created join functions
+Lior Akselrad (la87760): Implemented the natural join and join predicate methods. My query is 4-credit courses that has a prereq, owned by department with a budget over $700k, and building of course.
 
 Poojitha Kommineni: Created union and intersect functions
