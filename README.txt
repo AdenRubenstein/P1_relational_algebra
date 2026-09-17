@@ -1,6 +1,9 @@
 Group 1
 
 Aden Rubenstein: Created select and cartesian product functions.
+ Select advisors with a student who has received an A+ on an English or Languages course in Fall 2010.
+ Show the student ID, course & section ID, instructor ID, and instructor name.
+
 
 Aris Manglogiannis: Created diff and rename funtions
 
